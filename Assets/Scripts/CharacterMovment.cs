@@ -6,38 +6,47 @@ public class CharacterMovment : MonoBehaviour
 {
     public Animator animator;
     float speed = 8f;
+    float turnSpeed = 60f;
+
+    private CharaterInput characterInput;
+
     // Start is called before the first frame update
     void Start()
     {
-        
+        characterInput = GetComponent<CharaterInput>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        if(Input.GetKey(KeyCode.W))
+        Rotate();
+        Move();
+    }
+
+    private void Move()
+    {
+        if(characterInput.move != 0)
         {
-            transform.Translate(Vector3.forward * speed * Time.deltaTime);
+            Vector3 moveVector = characterInput.move * Vector3.forward;
+            transform.Translate(moveVector * speed * Time.deltaTime);
             animator.SetBool("IsWalk", true);
-        }
-        else if(Input.GetKey(KeyCode.D))
-        {
-            transform.Translate(Vector3.right * speed * Time.deltaTime);
-            animator.SetBool("IsWalk", true);
-        }
-        else if(Input.GetKey(KeyCode.S))
-        {
-            transform.Translate(Vector3.back * speed * Time.deltaTime);
-            animator.SetBool("IsWalk", true);            
-        }
-        else if(Input.GetKey(KeyCode.A))
-        {
-            transform.Translate(Vector3.left * speed * Time.deltaTime);
-            animator.SetBool("IsWalk", true);           
         }
         else
         {
             animator.SetBool("IsWalk", false);
+        }
+    }
+
+    private void Rotate()
+    {
+        if(characterInput.rotate != 0)
+        {
+            Quaternion newRotation = Quaternion.Euler(0, characterInput.rotate * turnSpeed, 0);
+            transform.rotation = Quaternion.Slerp(transform.rotation, transform.rotation * newRotation, Time.deltaTime);
+        }
+        else
+        {
+
         }
     }
 }
